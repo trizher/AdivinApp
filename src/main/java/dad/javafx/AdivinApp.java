@@ -19,12 +19,14 @@ public class AdivinApp extends Application {
 	private TextField comprobarText;
 	private Button comprobarButton;
 	private Label resultadoLabel;
-	private int intentos = 0;
+	private int intentos;
 	private int numSecreto;
 	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		numSecreto = (int)(Math.random() * 100) + 1;
+		generarNumAleatorio();
+		intentos = 0;
+		
 		resultadoLabel = new Label();
 		resultadoLabel.setText("Introduce un número del 1 al 100");
 		
@@ -46,16 +48,23 @@ public class AdivinApp extends Application {
 		primaryStage.show();
 
 	}
+	
+	private void generarNumAleatorio() {
+		numSecreto = (int)(Math.random() * 100) + 1;
+	}
 
 	private void onComprobarButtonAction(ActionEvent e) {
 		String texto = comprobarText.getText();
+		String mensaje = "";
+		
 		AlertType tipo = null;
 		String titulo = "AdivinApp";
 		String cabecera = "";
 		String contenido = "";
+		
 		Pattern p = Pattern.compile("^[0-9]+$");
 	    Matcher m = p.matcher(texto);
-	    String mensaje = "";
+	    
 	    intentos++;
 	    if (!m.matches()) {
 	    	 tipo = AlertType.ERROR;
@@ -67,6 +76,10 @@ public class AdivinApp extends Application {
 	    		tipo = AlertType.INFORMATION;
 		    	cabecera = "¡¡Has acertado!!";
 		    	contenido = "Has necesitado " + intentos + " intentos.\nVuelve a jugar y hazlo mejor";
+		    	//Reseteo de datos para comenzar nueva partida
+				generarNumAleatorio();
+				intentos = 0;
+				comprobarText.setText("");
 	    	} else {
 	    		if (num < numSecreto) {
 	    			mensaje = num + " es menor que el número secreto";
@@ -80,7 +93,7 @@ public class AdivinApp extends Application {
 	    }
 	    
 	    Alert alert = new Alert(tipo);
-	    alert.setTitle(titulo);
+	    alert.setTitle(titulo + numSecreto);
 	    alert.setHeaderText(cabecera);
 	    alert.setContentText(contenido);
 
